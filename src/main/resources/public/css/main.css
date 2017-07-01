@@ -1,0 +1,11 @@
+#whitelist {
+  padding: 1rem;
+}
+
+.name {
+  float: left;
+}
+
+.value {
+  float: right;
+}
