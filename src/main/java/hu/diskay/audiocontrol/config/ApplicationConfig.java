@@ -6,8 +6,11 @@ import hu.diskay.audiocontrol.service.AudioDeviceService;
 import hu.diskay.audiocontrol.service.AudioDeviceServiceImpl;
 import hu.diskay.audiocontrol.service.AudioVolumeService;
 import hu.diskay.audiocontrol.service.AudioVolumeServiceImpl;
+import hu.diskay.audiocontrol.service.TempFileService;
+import hu.diskay.audiocontrol.service.TempFileServiceImpl;
 import hu.diskay.audiocontrol.service.VolumeStore;
 import hu.diskay.audiocontrol.service.VolumeStoreImpl;
+import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -25,12 +28,12 @@ public class ApplicationConfig {
     private Environment env;
 
     @Bean
-    public AudioDeviceService audioDeviceService() {
+    public AudioDeviceService audioDeviceService(TempFileService tempFileService) throws IOException {
         List<String> allowed = PropertyReader.getStrings("devices.allowed", env);
         String path = PropertyReader.getString("util.nircmdc.path", env);
         String baseDeviceName = PropertyReader.getString("devices.base", env);
 
-        return new AudioDeviceServiceImpl(path, allowed, baseDeviceName);
+        return new AudioDeviceServiceImpl(path, tempFileService, allowed, baseDeviceName);
     }
 
     @Bean
@@ -47,9 +50,22 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AudioVolumeService audioVolumeService(AudioDeviceService audioDeviceService, VolumeStore volumeStore) {
+    public TempFileService tempFileService() {
+        String workDir = PropertyReader.getString("application.workDir", env);
+
+        return new TempFileServiceImpl(workDir);
+    }
+
+    @Bean
+    public AudioVolumeService audioVolumeService(
+        TempFileService tempFileService,
+        AudioDeviceService audioDeviceService,
+        VolumeStore volumeStore)
+        throws IOException {
+
         String path = PropertyReader.getString("util.nircmdc.path", env);
-        return new AudioVolumeServiceImpl(path, audioDeviceService, volumeStore);
+
+        return new AudioVolumeServiceImpl(path, tempFileService, audioDeviceService, volumeStore);
     }
 
     @Bean

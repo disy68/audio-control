@@ -2,6 +2,7 @@ package hu.diskay.audiocontrol.service;
 
 import static java.util.stream.Collectors.toList;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -11,12 +12,17 @@ import javax.sound.sampled.Mixer.Info;
 public class AudioDeviceServiceImpl implements AudioDeviceService {
 
     public static final String PREFIX = "Port";
-    private final String nircmdcPath;
+    private final File nircmdcFile;
     private final List<String> enabledDeviceNames;
     private final String baseDeviceName;
 
-    public AudioDeviceServiceImpl(String nircmdcPath, List<String> enabledDeviceNames, String baseDeviceName) {
-        this.nircmdcPath = nircmdcPath;
+    public AudioDeviceServiceImpl(
+        String nircmdcPath,
+        TempFileService tempFileService,
+        List<String> enabledDeviceNames,
+        String baseDeviceName) throws IOException {
+
+        this.nircmdcFile = tempFileService.getTempFile(nircmdcPath);
         this.enabledDeviceNames = enabledDeviceNames;
         this.baseDeviceName = baseDeviceName;
     }
@@ -57,7 +63,7 @@ public class AudioDeviceServiceImpl implements AudioDeviceService {
     }
 
     private void runChangeProcess(String deviceName) throws IOException {
-        new ProcessBuilder().command(nircmdcPath, "setdefaultsounddevice", deviceName).start();
+        new ProcessBuilder().command(nircmdcFile.getAbsolutePath(), "setdefaultsounddevice", deviceName).start();
     }
 
     private boolean isEnabled(Info info) {

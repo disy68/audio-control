@@ -29,4 +29,26 @@ public class VolumeController {
             return "fuckup";
         }
     }
+
+    @RequestMapping("/mute/{device}")
+    public String mute(@PathVariable("device") String device) {
+        try {
+            audioVolumeService.mute(device);
+            return "ok";
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Fuckup: {}", e);
+            return "fuckup";
+        }
+    }
+
+    @RequestMapping("/unmute/{device}")
+    public String unmute(@PathVariable("device") String device) {
+        try {
+            audioVolumeService.unmute(device);
+            return "ok";
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Fuckup: {}", e);
+            return "fuckup";
+        }
+    }
 }
