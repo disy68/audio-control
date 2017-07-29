@@ -24,8 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Configuration
 @EnableAutoConfiguration
 @PropertySource({
-    "file:/${WORK_DIR}/config/device.properties",
-    "file:/${WORK_DIR}/config/application.properties"
+    "file:/${WORK_DIR}/config/device.properties"
 })
 @Import({
     DatabaseConfig.class,

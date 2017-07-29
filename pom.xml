@@ -14,6 +14,8 @@
     <java.version>1.8</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+    <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
     <commons-io.version>2.4</commons-io.version>
   </properties>
 
@@ -71,6 +73,12 @@
       <version>${commons-io.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.google.code.maven-replacer-plugin</groupId>
+      <artifactId>replacer</artifactId>
+      <version>${maven-replacer-plugin.version}</version>
+    </dependency>
+
   </dependencies>
 
 
@@ -79,6 +87,54 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/resources/util</directory>
+                  <includes>
+                    <include>start.bat</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <version>${maven-replacer-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>replace</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <file>${basedir}/target/start.bat</file>
+          <replacements>
+            <replacement>
+              <token>JAR_NAME_TOKEN</token>
+              <value>./${project.build.finalName}.jar</value>
+            </replacement>
+          </replacements>
+        </configuration>
       </plugin>
     </plugins>
   </build>
