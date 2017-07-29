@@ -17,4 +17,12 @@ public class VolumeInformation {
     public boolean isMuted() {
         return isMuted;
     }
+
+    @Override
+    public String toString() {
+        return "VolumeInformation{" +
+            "volume=" + volume +
+            ", isMuted=" + isMuted +
+            '}';
+    }
 }

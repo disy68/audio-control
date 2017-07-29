@@ -72,7 +72,7 @@ public class AudioVolumeServiceImpl implements AudioVolumeService {
 
     private VolumeInformation createVolumeInformation(String deviceName, int volume) {
         VolumeInformation volumeInformation = volumeStore.get(deviceName);
-        boolean muted = false;
+        boolean muted = VolumeStore.DEFAULT_MUTED_STATUS;
         if (nonNull(volumeInformation)) {
             muted = volumeInformation.isMuted();
         }
@@ -81,7 +81,7 @@ public class AudioVolumeServiceImpl implements AudioVolumeService {
 
     private VolumeInformation createVolumeInformation(String deviceName, boolean muted) {
         VolumeInformation volumeInformation = volumeStore.get(deviceName);
-        int volume = VolumeStoreImpl.DEFAULT_VALUE;
+        int volume = VolumeStore.DEFAULT_VALUE;
         if (nonNull(volumeInformation)) {
             volume = volumeInformation.getVolume();
         }

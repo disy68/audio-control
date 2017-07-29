@@ -6,8 +6,6 @@ import java.util.concurrent.ConcurrentMap;
 
 public class VolumeStoreImpl implements VolumeStore {
 
-    public static final int DEFAULT_VALUE = 20;
-    public static final boolean DEFAULT_MUTED_STATUS = false;
     private final ConcurrentMap<String, VolumeInformation> volumeInformations;
 
     public VolumeStoreImpl() {
