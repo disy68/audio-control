@@ -1,5 +1,8 @@
 package hu.diskay.audiocontrol.service;
 
+import static java.util.Objects.nonNull;
+
+import hu.diskay.audiocontrol.controller.response.VolumeInformation;
 import java.io.File;
 import java.io.IOException;
 
@@ -24,29 +27,42 @@ public class AudioVolumeServiceImpl implements AudioVolumeService {
     @Override
     public void setVolume(String deviceName, int newVolume) throws IOException, InterruptedException {
         switchToDevice(deviceName);
-        processChange(deviceName, newVolume);
+        VolumeInformation volumeInformation = createVolumeInformation(deviceName, newVolume);
+        processVolumeChange(deviceName, volumeInformation);
         switchToDefault();
     }
 
     @Override
-    public int getVolume(String device) {
+    public VolumeInformation getVolumeInformation(String device) {
         return volumeStore.get(device);
     }
 
     @Override
     public void mute(String device) throws IOException, InterruptedException {
-        // TODO: persist mute information
         switchToDevice(device);
-        new ProcessBuilder().command(nircmdcTempFile.getAbsolutePath(), "mutesysvolume", "1").start();
+        VolumeInformation volumeInformation = createVolumeInformation(device, true);
+        processMutedChange(device, volumeInformation);
         switchToDefault();
     }
 
     @Override
     public void unmute(String device) throws IOException, InterruptedException {
-        // TODO: persist mute information
         switchToDevice(device);
-        new ProcessBuilder().command(nircmdcTempFile.getAbsolutePath(), "mutesysvolume", "0").start();
+        VolumeInformation volumeInformation = createVolumeInformation(device, false);
+        processMutedChange(device, volumeInformation);
         switchToDefault();
+    }
+
+    private void processMutedChange(String deviceName, VolumeInformation volumeInformation)
+        throws IOException {
+
+        if (volumeInformation.isMuted()) {
+            new ProcessBuilder().command(nircmdcTempFile.getAbsolutePath(), "mutesysvolume", "1").start();
+        } else {
+            new ProcessBuilder().command(nircmdcTempFile.getAbsolutePath(), "mutesysvolume", "0").start();
+        }
+
+        volumeStore.put(deviceName, volumeInformation);
     }
 
     private void switchToDevice(String deviceName) throws IOException, InterruptedException {
@@ -54,7 +70,31 @@ public class AudioVolumeServiceImpl implements AudioVolumeService {
         Thread.sleep(100);
     }
 
-    private void processChange(String deviceName, int newVolume) throws IOException {
+    private VolumeInformation createVolumeInformation(String deviceName, int volume) {
+        VolumeInformation volumeInformation = volumeStore.get(deviceName);
+        boolean muted = false;
+        if (nonNull(volumeInformation)) {
+            muted = volumeInformation.isMuted();
+        }
+        return new VolumeInformation(volume, muted);
+    }
+
+    private VolumeInformation createVolumeInformation(String deviceName, boolean muted) {
+        VolumeInformation volumeInformation = volumeStore.get(deviceName);
+        int volume = VolumeStoreImpl.DEFAULT_VALUE;
+        if (nonNull(volumeInformation)) {
+            volume = volumeInformation.getVolume();
+        }
+        return new VolumeInformation(volume, muted);
+    }
+
+    private void processVolumeChange(
+        String deviceName,
+        VolumeInformation volumeInformation)
+        throws IOException {
+
+        int newVolume = volumeInformation.getVolume();
+
         if (newVolume < 0) {
             newVolume = 0;
         } else if (newVolume > 100) {
@@ -63,9 +103,14 @@ public class AudioVolumeServiceImpl implements AudioVolumeService {
 
         float realValue = getRealValue(newVolume);
 
-        new ProcessBuilder().command(nircmdcTempFile.getAbsolutePath(), "setsysvolume", String.format("%.1f", realValue)).start();
+        new ProcessBuilder()
+            .command(
+                nircmdcTempFile.getAbsolutePath(),
+                "setsysvolume",
+                String.format("%.1f", realValue))
+            .start();
 
-        volumeStore.put(deviceName, newVolume);
+        volumeStore.put(deviceName, volumeInformation);
     }
 
     private float getRealValue(float volume) {

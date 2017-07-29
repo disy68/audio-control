@@ -18,3 +18,7 @@ html, body {
 .value {
   float: right;
 }
+
+.muted {
+  opacity: 0.5;
+}

@@ -3,18 +3,19 @@ package hu.diskay.audiocontrol.controller.response;
 public class DeviceVolumeResponse {
 
     private final String deviceName;
-    private final int volume;
+    private final VolumeInformation volumeInformation;
 
-    public DeviceVolumeResponse(String deviceName, int volume) {
+    public DeviceVolumeResponse(String deviceName,
+        VolumeInformation volumeInformation) {
         this.deviceName = deviceName;
-        this.volume = volume;
+        this.volumeInformation = volumeInformation;
     }
 
     public String getDeviceName() {
         return deviceName;
     }
 
-    public int getVolume() {
-        return volume;
+    public VolumeInformation getVolumeInformation() {
+        return volumeInformation;
     }
 }

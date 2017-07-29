@@ -23,14 +23,16 @@
   var token = "{}";
 
   function getCard(item) {
-    return '<div class="col s12 m6">' +
+    var muted = item['volumeInformation']['muted'] ? "muted" : "";
+
+    return '<div class="col s12 m6 '+ muted +'">' +
                      '<div class="card">' +
                        '<div class="card-content">' +
                          '<span class="card-title name">'
                            + item['deviceName'] +
                          '</span>' +
                          '<span class="card-value value">'
-                           + item['volume'] +
+                           + item['volumeInformation']['volume'] +
                          '</span>' +
                          '<p class="range">' + token + '</p>' +
                        '</div>' +
@@ -60,7 +62,7 @@
       $cardRow = $(getCardRow());
 
       data.forEach(function(item) {
-        var range = volumeRange.replace(token, item['volume']);
+        var range = volumeRange.replace(token, item['volumeInformation']['volume']);
         var card =  getCard(item);
         card = card.replace(token, range);
         var $card = $(card);
@@ -88,6 +90,7 @@
 
     $.get(url, function(data) {
       // something to show maybe a class change
+      $('#' + deviceName).addClass("muted");
       //restartMainInterval();
     });
   }
@@ -98,6 +101,7 @@
 
         $.get(url, function(data) {
           // something to show maybe a class change
+          $('#' + deviceName).removeClass("muted");
           //restartMainInterval();
         });
   }

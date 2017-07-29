@@ -21,7 +21,7 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 @EnableAutoConfiguration
-@PropertySource("classpath:/device.properties")
+@PropertySource("file:/${WORK_DIR}/device.properties")
 public class ApplicationConfig {
 
     @Autowired
@@ -51,7 +51,7 @@ public class ApplicationConfig {
 
     @Bean
     public TempFileService tempFileService() {
-        String workDir = PropertyReader.getString("application.workDir", env);
+        String workDir = PropertyReader.getString("WORK_DIR", env);
 
         return new TempFileServiceImpl(workDir);
     }

@@ -1,8 +1,10 @@
 package hu.diskay.audiocontrol.service;
 
+import hu.diskay.audiocontrol.controller.response.VolumeInformation;
+
 public interface VolumeStore {
 
-    void put(String deviceName, int volume);
+    void put(String deviceName, VolumeInformation volumeInformation);
 
-    int get(String deviceName);
+    VolumeInformation get(String deviceName);
 }

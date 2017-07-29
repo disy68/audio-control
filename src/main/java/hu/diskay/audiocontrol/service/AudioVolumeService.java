@@ -1,12 +1,13 @@
 package hu.diskay.audiocontrol.service;
 
+import hu.diskay.audiocontrol.controller.response.VolumeInformation;
 import java.io.IOException;
 
 public interface AudioVolumeService {
 
   void setVolume(String device, int volume) throws IOException, InterruptedException;
 
-  int getVolume(String device);
+  VolumeInformation getVolumeInformation(String device);
 
   void mute(String device) throws IOException, InterruptedException;
 
