@@ -1,3 +1,11 @@
-set WORK_DIR=d:\Fejlesztes\java\AudioVolumeControl\exampleWorkDir
+@echo off
+SET VOLUME_CONTROL_START_FOLDER=%~dp0
 
-java -jar JAR_NAME_TOKEN
+SET WORK_DIR >NUL 2>&1
+IF ERRORLEVEL 1 (
+	set WORK_DIR=%VOLUME_CONTROL_START_FOLDER%/workdir
+)
+
+java -jar %VOLUME_CONTROL_START_FOLDER%/JAR_NAME_TOKEN
+
+pause

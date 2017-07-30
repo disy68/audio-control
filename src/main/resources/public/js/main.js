@@ -1,6 +1,6 @@
 (function(){
   function startInterVal(isFirst) {
-    return setInterval(function(){ getWhitelistedDevices(); }, 4000);
+    return setInterval(function(){ getWhitelistedDevices(); }, 3000);
   }
 
   var interval = startInterVal(true);
@@ -9,8 +9,20 @@
       clearInterval(interval);
   }
 
+  var isRefreshEnabled = true;
+  var isMultiModeEnabled = true;
+
+  function setRefresh(enabled) {
+    isRefreshEnabled = enabled;
+  }
+
   function restartMainInterval() {
-    interval = startInterVal(false);
+    var isEnabled = isRefreshEnabled;
+    if (isEnabled) {
+      interval = startInterVal(false);
+    } else {
+      clearMainInterval();
+    }
   }
 
   var urlMapping = {
@@ -80,7 +92,7 @@
 
     $.get(url, function(data) {
       $('#' + deviceName).find('span.value').first().text(volumeLevel);
-      //restartMainInterval();
+      restartMainInterval();
     });
   }
 
@@ -89,9 +101,8 @@
     clearMainInterval();
 
     $.get(url, function(data) {
-      // something to show maybe a class change
       $('#' + deviceName).addClass("muted");
-      //restartMainInterval();
+      restartMainInterval();
     });
   }
 
@@ -100,9 +111,8 @@
         clearMainInterval();
 
         $.get(url, function(data) {
-          // something to show maybe a class change
           $('#' + deviceName).removeClass("muted");
-          //restartMainInterval();
+          restartMainInterval();
         });
   }
 
@@ -114,8 +124,6 @@
     volume = $target.val();
     device = $target.parent().siblings('span.name').first().text();
 
-    console.log(device);
-
     changeVolume(device, volume);
   });
 
@@ -123,8 +131,6 @@
       event.preventDefault();
       var $target = $(event.target);
       var device = $target.parents().eq(2).attr('id');
-
-      console.log("Device: " + device);
 
       if ($target.hasClass("mute")) {
         mute(device);
@@ -134,7 +140,28 @@
       return false;
     });
 
+  var $pushdown = $('#pushdown');
+
+  $pushdown.on('change', 'input[type=checkbox]' ,function(event) {
+      $target = $(event.target);
+      var method = $target.attr('id');
+      var enabled = event.target.checked;
+
+      if (method === "refresh") {
+        clearMainInterval();
+        setRefresh(enabled);
+        restartMainInterval();
+      }
+
+      if (method === "multimodule") {
+        // TODO: add functionality for switchig back to base or not
+      }
+    });
+
+  $('#refresh').prop('checked', isRefreshEnabled);
+  $('#multimode').prop('checked', isMultiModeEnabled);
+
   // startup with a fancy delay ;-) and loading all the way :)
-  setTimeout(function(){ getWhitelistedDevices(); }, 1500);
+  setTimeout(function(){ getWhitelistedDevices(); }, 1000);
 
 })();
