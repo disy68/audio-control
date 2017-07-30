@@ -3,6 +3,7 @@ package hu.diskay.audiocontrol.service;
 import static java.util.Objects.nonNull;
 
 import hu.diskay.audiocontrol.controller.response.VolumeInformation;
+import hu.diskay.audiocontrol.service.store.VolumeStore;
 import java.io.File;
 import java.io.IOException;
 

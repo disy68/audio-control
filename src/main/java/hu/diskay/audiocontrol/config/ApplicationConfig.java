@@ -6,10 +6,11 @@ import hu.diskay.audiocontrol.service.AudioDeviceService;
 import hu.diskay.audiocontrol.service.AudioDeviceServiceImpl;
 import hu.diskay.audiocontrol.service.AudioVolumeService;
 import hu.diskay.audiocontrol.service.AudioVolumeServiceImpl;
-import hu.diskay.audiocontrol.service.db.DbVolumeStore;
 import hu.diskay.audiocontrol.service.TempFileService;
 import hu.diskay.audiocontrol.service.TempFileServiceImpl;
-import hu.diskay.audiocontrol.service.VolumeStore;
+import hu.diskay.audiocontrol.service.store.FileVolumeStore;
+import hu.diskay.audiocontrol.service.store.VolumeInformationOBjectStore;
+import hu.diskay.audiocontrol.service.store.VolumeStore;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +20,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
 @EnableAutoConfiguration
 @PropertySource({
     "file:/${WORK_DIR}/config/device.properties",
-    "file:/${WORK_DIR}/config/application.properties"
+    "file:/${WORK_DIR}/config/database.properties"
 })
 @Import({
-    DatabaseConfig.class,
     ComponentConfig.class
 })
 public class ApplicationConfig {
@@ -46,8 +45,10 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public VolumeStore volumeStore(JdbcTemplate jdbcTemplate) {
-        return new DbVolumeStore(jdbcTemplate);
+    public VolumeStore volumeStore() {
+        String storeDirectoryPath = PropertyReader.getString("store.directory.path", env);
+
+        return new FileVolumeStore(storeDirectoryPath, new VolumeInformationOBjectStore());
     }
 
     @Bean

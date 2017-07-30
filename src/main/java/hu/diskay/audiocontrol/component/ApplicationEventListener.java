@@ -1,11 +1,10 @@
 package hu.diskay.audiocontrol.component;
 
-import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +17,8 @@ public class ApplicationEventListener {
     private ApplicationContext context;
 
     @EventListener
-    public void handleContextRefresh(ContextRefreshedEvent contextRefreshedEvent) {
-        DataSource dataSource = context.getBean(javax.sql.DataSource.class);
-        LOG.info("DATASOURCE = " + dataSource);
+    public void handleContextRefresh(ContextStartedEvent contextStartedEvent) {
+        // TODO: for data invalidation
+        LOG.info("TODO: add and check data timestamps");
     }
 }

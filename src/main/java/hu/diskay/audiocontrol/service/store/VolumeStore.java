@@ -1,4 +1,4 @@
-package hu.diskay.audiocontrol.service;
+package hu.diskay.audiocontrol.service.store;
 
 import hu.diskay.audiocontrol.controller.response.VolumeInformation;
 
@@ -9,4 +9,8 @@ public interface VolumeStore {
     void put(String deviceName, VolumeInformation volumeInformation);
 
     VolumeInformation get(String deviceName);
+
+    default VolumeInformation getDefaultInformation() {
+        return new VolumeInformation(DEFAULT_VALUE, DEFAULT_MUTED_STATUS);
+    }
 }

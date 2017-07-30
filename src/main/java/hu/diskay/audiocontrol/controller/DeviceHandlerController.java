@@ -4,7 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import hu.diskay.audiocontrol.controller.response.DeviceVolumeResponse;
 import hu.diskay.audiocontrol.service.AudioDeviceService;
-import hu.diskay.audiocontrol.service.VolumeStore;
+import hu.diskay.audiocontrol.service.store.VolumeStore;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;

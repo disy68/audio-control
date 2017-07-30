@@ -158,4 +158,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-exampleWorkDir/db/
+exampleWorkDir/store/
